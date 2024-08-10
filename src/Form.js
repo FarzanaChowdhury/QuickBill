@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { jsPDF } from 'jspdf';
-import './CSS/styles.css'
+import './CSS/styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { handleChange, handleLabelChange, toggleEdit } from './Functions.js'
+import { faPen, faSave, faTimes, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { handleChange, handleFocus, handleLabelChange, toggleEdit } from './Functions.js';
 
 function BillCalculator() {
+
+  const [floorNo, setFloor] = useState(["Floor 1", "Floor 2", "Floor 3", "Floor 4"])
+
   const [bills, setBills] = useState([
     { bill1: 0, bill2: 0, bill3: 0, total: 0 },
     { bill1: 0, bill2: 0, bill3: 0, total: 0 },
@@ -20,15 +23,37 @@ function BillCalculator() {
     { label1: 'Water Bill', label2: 'Gas Bill', label3: 'Electricity Bill' },
   ]);
 
-  const [isEditingBill, setEditBill] = useState(
-    Array(bills.length).fill({ bill1: false, bill2: false, bill3: false })
-  );
-
+ 
   const [isEditingLabel, setEditLabel] = useState(
     Array(labels.length).fill({ label1: false, label2: false, label3: false })
   );
 
   const [backupLabels, setBackupLabels] = useState(labels);
+
+  const addAttribute = (floorIndex) => {
+    console.log(floorIndex)
+    const newLabelKey = `label${Object.keys(labels[floorIndex]).length + 1}`;
+    const newBillKey = `bill${Object.keys(bills[floorIndex]).length }`; // Adjust key naming to follow the pattern
+
+
+
+    const newLabels = labels.map((label, i) => {
+      console.log('Index:', i); // Add this line to log the value of `i`
+      return i === floorIndex ? { ...label, [newLabelKey]: 'New Bill' } : label;
+    });
+    
+    const newBills = bills.map((bill, i) =>
+      i === floorIndex ? { ...bill, [newBillKey]: 0 } : bill
+    );
+
+    const newEditLabels = isEditingLabel.map((editLabel, i) =>
+      i === floorIndex ? { ...editLabel, [newLabelKey]: false } : editLabel
+    );
+
+    setLabel(newLabels);
+    setBills(newBills);
+    setEditLabel(newEditLabels);
+  };
 
 
   const exportPDF = () => {
@@ -59,31 +84,36 @@ function BillCalculator() {
   };
 
   const renderInput = (index, billField, labelField) => (
-    <>
-      <button className='edit' type="button">
-        <FontAwesomeIcon icon={isEditingLabel[index][labelField] ? faSave : faPen} onClick={() => startEditing(index, labelField)} />
-      </button>
+    <div className='fields'>
+      <div className='edit-button'>
+        <button className='edit' type="button">
+          <FontAwesomeIcon icon={isEditingLabel[index][labelField] ? faSave : faPen} onClick={() => startEditing(index, labelField)} />
+        </button>
+      </div>
       {isEditingLabel[index][labelField] ? (
-        <><input
-          type='text'
-          value={labels[index][labelField]}
-          onChange={(e) => handleLabelChange(index, labelField, e.target.value, labels, setLabel)} />
-
-          <button className='cancel' type='button' onClick={() => cancelEditing(index, labelField)}><FontAwesomeIcon icon={faTimes} /></button>
-
+        <>
+          <input
+            type='text'
+            value={labels[index][labelField]}
+            onChange={(e) => handleLabelChange(index, labelField, e.target.value, labels, setLabel)}
+          />
+          <button className='cancel' type='button' onClick={() => cancelEditing(index, labelField)}>
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
         </>
       ) : (
         <label>
-          {labels[index][labelField]}:
+          <div className='label-name'>{labels[index][labelField]}</div>:
           <input
             type="number"
             value={bills[index][billField]}
+            onFocus={handleFocus}
             onChange={(e) => handleChange(index, billField, e.target.value, bills, setBills)}
           />
         </label>
       )}
       <br /><br />
-    </>
+    </div>
   );
 
   return (
@@ -92,17 +122,17 @@ function BillCalculator() {
       <div className='grid-container'>
         {bills.map((bill, index) => (
           <div key={index}>
-            <h3>Floor {index + 1}</h3>
+            <h3><input defaultValue={"Floor {index + 1}"}></input></h3>
             <form>
-              {renderInput(index, 'bill1', 'label1')}
-              {renderInput(index, 'bill2', 'label2')}
-              {renderInput(index, 'bill3', 'label3')}
-
-
-
-              {/* <button type="button" onClick={() => calculateTotal(index, bills, setBills)}>Calculate Total</button> */}
+              <div className='labelsNames'>
+                {Object.keys(bill).filter(key => key !== 'total').map((key, idx) => (
+                  renderInput(index, key, `label${idx + 1}`)
+                ))}
+              </div>
+              <button type="button" className='add' onClick={() => addAttribute(index)}>
+                <FontAwesomeIcon icon={faPlus} /> Add Attribute
+              </button>
             </form>
-
             <p>Total: {bill.total}</p>
           </div>
         ))}
