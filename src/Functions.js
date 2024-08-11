@@ -41,3 +41,66 @@ export const calculateTotal = (index, bills, setBills) => {
   setBills(updatedBills);
 };
 
+
+//add bills
+
+export const addAttribute = (floorIndex, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel) => {
+  console.log(floorIndex)
+  const newLabelKey = `label${Object.keys(labels[floorIndex]).length + 1}`;
+  const newBillKey = `bill${Object.keys(bills[floorIndex]).length }`; 
+
+
+  const newLabels = labels.map((label, i) => {
+    console.log('Index:', i);
+    return i === floorIndex ? { ...label, [newLabelKey]: 'New Bill' } : label;
+  });
+  
+  const newBills = bills.map((bill, i) =>
+    i === floorIndex ? { ...bill, [newBillKey]: 0 } : bill
+  );
+
+  const newEditLabels = isEditingLabel.map((editLabel, i) =>
+    i === floorIndex ? { ...editLabel, [newLabelKey]: false } : editLabel
+  );
+
+  setLabel(newLabels);
+  setBills(newBills);
+  setEditLabel(newEditLabels);
+};
+
+//delete bill
+
+export const deleteAttribute = (floorIndex, billKey, labelKey, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel) => {
+
+  const newBills = bills.map((bill, i) => {
+    if (i === floorIndex) {
+      const { [billKey]: _, ...rest } = bill;
+      return rest;
+    }
+    return bill;
+  });
+
+
+  // Remove specific label
+  const newLabels = labels.map((label, i) => {
+    if (i === floorIndex) {
+      const { [labelKey]: _, ...rest } = label;
+      return rest;
+    }
+    return label;
+  });
+
+
+  //Remove specific editing state
+  const newEditLabels = isEditingLabel.map((editLabel, i) => {
+    if (i === floorIndex) {
+      const { [labelKey]: _, ...rest } = editLabel;
+      return rest;
+    }
+    return editLabel;
+  });
+
+  setBills(newBills);
+  setLabel(newLabels);
+  setEditLabel(newEditLabels);
+};

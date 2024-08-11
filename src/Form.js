@@ -2,58 +2,34 @@ import React, { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import './CSS/styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faSave, faTimes, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { handleChange, handleFocus, handleLabelChange, toggleEdit } from './Functions.js';
+import { faPen, faSave, faTimes, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { handleChange, handleFocus, handleLabelChange, toggleEdit, addAttribute, deleteAttribute } from './Functions.js';
 
 function BillCalculator() {
 
   const [floorNo, setFloor] = useState(["Floor 1", "Floor 2", "Floor 3", "Floor 4"])
 
   const [bills, setBills] = useState([
-    { bill1: 0, bill2: 0, bill3: 0, total: 0 },
-    { bill1: 0, bill2: 0, bill3: 0, total: 0 },
-    { bill1: 0, bill2: 0, bill3: 0, total: 0 },
-    { bill1: 0, bill2: 0, bill3: 0, total: 0 },
+    { bill1: 0, bill2: 0, bill3: 0, bill4: 0, bill5: 0, total: 0 },
+    { bill1: 0, bill2: 0, bill3: 0, bill4: 0, bill5: 0, total: 0 },
+    { bill1: 0, bill2: 0, bill3: 0, bill4: 0, bill5: 0, total: 0 },
+    { bill1: 0, bill2: 0, bill3: 0, bill4: 0, bill5: 0, total: 0 },
   ]);
 
   const [labels, setLabel] = useState([
-    { label1: 'Water Bill', label2: 'Gas Bill', label3: 'Electricity Bill' },
-    { label1: 'Water Bill', label2: 'Gas Bill', label3: 'Electricity Bill' },
-    { label1: 'Water Bill', label2: 'Gas Bill', label3: 'Electricity Bill' },
-    { label1: 'Water Bill', label2: 'Gas Bill', label3: 'Electricity Bill' },
+    { label1: 'Water Bill', label2: 'Gas Bill', label3: 'Motor Bill', label4: 'Service Charge', label5: 'Stair Cleaning' },
+    { label1: 'Water Bill', label2: 'Gas Bill', label3: 'Motor Bill', label4: 'Service Charge', label5: 'Stair Cleaning' },
+    { label1: 'Water Bill', label2: 'Gas Bill', label3: 'Motor Bill', label4: 'Service Charge', label5: 'Stair Cleaning' },
+    { label1: 'Water Bill', label2: 'Gas Bill', label3: 'Motor Bill', label4: 'Service Charge', label5: 'Stair Cleaning' },
   ]);
 
- 
+
   const [isEditingLabel, setEditLabel] = useState(
-    Array(labels.length).fill({ label1: false, label2: false, label3: false })
+    Array(labels.length).fill({ label1: false, label2: false, label3: false, label4: false, label5: false })
   );
 
   const [backupLabels, setBackupLabels] = useState(labels);
 
-  const addAttribute = (floorIndex) => {
-    console.log(floorIndex)
-    const newLabelKey = `label${Object.keys(labels[floorIndex]).length + 1}`;
-    const newBillKey = `bill${Object.keys(bills[floorIndex]).length }`; // Adjust key naming to follow the pattern
-
-
-
-    const newLabels = labels.map((label, i) => {
-      console.log('Index:', i); // Add this line to log the value of `i`
-      return i === floorIndex ? { ...label, [newLabelKey]: 'New Bill' } : label;
-    });
-    
-    const newBills = bills.map((bill, i) =>
-      i === floorIndex ? { ...bill, [newBillKey]: 0 } : bill
-    );
-
-    const newEditLabels = isEditingLabel.map((editLabel, i) =>
-      i === floorIndex ? { ...editLabel, [newLabelKey]: false } : editLabel
-    );
-
-    setLabel(newLabels);
-    setBills(newBills);
-    setEditLabel(newEditLabels);
-  };
 
 
   const exportPDF = () => {
@@ -85,11 +61,20 @@ function BillCalculator() {
 
   const renderInput = (index, billField, labelField) => (
     <div className='fields'>
+      
       <div className='edit-button'>
         <button className='edit' type="button">
           <FontAwesomeIcon icon={isEditingLabel[index][labelField] ? faSave : faPen} onClick={() => startEditing(index, labelField)} />
         </button>
+
+        {!isEditingLabel[index][labelField] && (
+          <button type="button" className='delete'
+            onClick={() => deleteAttribute(index, billField, labelField, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel)}>
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        )}
       </div>
+
       {isEditingLabel[index][labelField] ? (
         <>
           <input
@@ -116,6 +101,7 @@ function BillCalculator() {
     </div>
   );
 
+
   return (
     <div>
       <h2>Bill Calculator</h2>
@@ -125,13 +111,20 @@ function BillCalculator() {
             <h3><input defaultValue={"Floor {index + 1}"}></input></h3>
             <form>
               <div className='labelsNames'>
-                {Object.keys(bill).filter(key => key !== 'total').map((key, idx) => (
-                  renderInput(index, key, `label${idx + 1}`)
+
+
+                {Object.keys(bill).filter(key => key !== 'total').map((key) => (
+                  renderInput(index, key, `label${key.replace('bill', '')}`)
                 ))}
+
+
               </div>
-              <button type="button" className='add' onClick={() => addAttribute(index)}>
-                <FontAwesomeIcon icon={faPlus} /> Add Attribute
+
+              {/* add attribute button */}
+              <button type="button" className='add' onClick={() => addAttribute(index, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel)}>
+                <FontAwesomeIcon icon={faPlus} /> Add Another Bill
               </button>
+
             </form>
             <p>Total: {bill.total}</p>
           </div>
