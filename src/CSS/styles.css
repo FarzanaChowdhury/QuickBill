@@ -31,3 +31,18 @@ height: 30px;
     text-align: left;
     display: inline-block;
 }
+
+.button-align{
+    display: flex;
+    justify-content: center;
+}
+button{
+    height: fit-content;
+    justify-self: center;
+    align-self: center;
+}
+
+.pdf{
+    display: flex;
+    justify-content: end;
+}

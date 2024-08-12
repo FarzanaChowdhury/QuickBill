@@ -3,13 +3,13 @@ import { jsPDF } from 'jspdf';
 import './CSS/styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faSave, faTimes, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { handleChange, handleFocus, handleLabelChange, toggleEdit, addAttribute, deleteAttribute, startEditingFloor, saveFloorName,cancelEditingFloor } from './Functions.js';
+import { handleChange, handleFocus, handleLabelChange, toggleEdit, addAttribute, deleteAttribute, startEditingFloor, saveFloorName, cancelEditingFloor } from './Functions.js';
+import { FlatName } from './EditFlatName.js';
 
 function BillCalculator() {
 
   const [floorNo, setFloor] = useState(["Floor 1", "Floor 2", "Floor 3", "Floor 4"])
-  const [editingFloorIndex, setEditingFloorIndex] = useState(null);
-  const [currentFloorName, setCurrentFloorName] = useState('');
+
 
   const [bills, setBills] = useState([
     { bill1: 0, bill2: 0, bill3: 0, bill4: 0, bill5: 0, total: 0 },
@@ -48,7 +48,7 @@ function BillCalculator() {
       doc.text(`${labels[i].label4}: ${bill.bill4}`, x, y + 40);
       doc.text(`${labels[i].label5}: ${bill.bill5}`, x, y + 50);
       doc.text(`Total: ${bill.total}`, x, y + 60);
-      doc.text('Mitu', x+50, y+80)
+      doc.text('Mitu', x + 50, y + 80)
     });
 
     doc.save('bill-summary.pdf');
@@ -66,7 +66,7 @@ function BillCalculator() {
 
   const renderInput = (index, billField, labelField) => (
     <div className='fields'>
-      
+
       <div className='edit-button'>
         <button className='edit' type="button">
           <FontAwesomeIcon icon={isEditingLabel[index][labelField] ? faSave : faPen} onClick={() => startEditing(index, labelField)} />
@@ -93,7 +93,7 @@ function BillCalculator() {
         </>
       ) : (
         <label>
-          <div className='label-name'>{labels[index][labelField]}</div>:
+          <div className='label-name'> {' ' + labels[index][labelField]}</div>:
           <input
             type="number"
             value={bills[index][billField]}
@@ -110,33 +110,19 @@ function BillCalculator() {
   return (
     <div>
       <h2>Bill Calculator</h2>
+
+      <div className='pdf'>
+
+        <button onClick={exportPDF}>Export as PDF</button>
+      </div>
+
       <div className='grid-container'>
+
+
         {bills.map((bill, index) => (
           <div key={index}>
-            {/* <h3><input defaultValue={"Floor {index + 1}"}></input></h3> */}
-
-          
-      {editingFloorIndex === index ? (
-        <>
-          <input
-            type='text'
-            value={currentFloorName}
-            onChange={(e) => setCurrentFloorName(e.target.value)}
-          />
-          <button onClick={() => saveFloorName(index,setFloor, setEditingFloorIndex, setCurrentFloorName,currentFloorName, floorNo)}>Save</button>
-          <button onClick={() => cancelEditingFloor(setEditingFloorIndex,setCurrentFloorName)}>Cancel</button>
-        </>
-      ) : (
-        <>
-          <span>{floorNo[index]}</span>
-          <button onClick={() => startEditingFloor(index, setEditingFloorIndex, setCurrentFloorName, floorNo)}>Edit</button>
-        </>
-      )}
-  
-
-
-
-
+            {/* <h3>{floorNo[index]}</h3> */}
+            <FlatName floorNo={floorNo} setFloor={setFloor} index={index} />
             <form>
               <div className='labelsNames'>
 
@@ -158,9 +144,10 @@ function BillCalculator() {
           </div>
         ))}
       </div>
-      <button onClick={exportPDF}>Export as PDF</button>
+
     </div>
   );
 }
 
 export default BillCalculator;
+
