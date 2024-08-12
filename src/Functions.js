@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 
+
 export const handleChange = (index, field, value, bills, setBills) => {
   const updatedBills = bills.map((bill, i) =>
     i === index ? { ...bill, [field]: parseFloat(value) || 0 } : bill
@@ -103,4 +104,25 @@ export const deleteAttribute = (floorIndex, billKey, labelKey, labels, bills, is
   setBills(newBills);
   setLabel(newLabels);
   setEditLabel(newEditLabels);
+};
+
+
+
+
+export const startEditingFloor = (index,setEditingFloorIndex, setCurrentFloorName, floorNo) => {
+  setEditingFloorIndex(index);
+  setCurrentFloorName(floorNo[index]);
+};
+
+export const saveFloorName = (index, setFloor, setEditingFloorIndex, setCurrentFloorName, currentFloorName, floorNo) => {
+  const newFloorNo = [...floorNo];
+  newFloorNo[index] = currentFloorName;
+  setFloor(newFloorNo);
+  setEditingFloorIndex(null);
+  setCurrentFloorName('');
+};
+
+export const cancelEditingFloor = (setEditingFloorIndex,setCurrentFloorName) => {
+  setEditingFloorIndex(null);
+  setCurrentFloorName('');
 };
