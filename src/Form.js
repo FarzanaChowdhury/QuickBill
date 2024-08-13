@@ -33,26 +33,92 @@ function BillCalculator() {
   const [backupLabels, setBackupLabels] = useState(labels);
 
 
+//   const exportPDF = () => {
+//     const doc = new jsPDF();
 
-  const exportPDF = () => {
-    const doc = new jsPDF();
+//     doc.setFont('helvetica'); // Set font style
+//     doc.setFontSize(12); // Set font size
 
-    bills.forEach((bill, i) => {
-      const x = (i % 2) * 100 + 20;
-      const y = Math.floor(i / 2) * 60 + 10;
+//     bills.forEach((bill, i) => {
+//         const x = (i % 2) * 100 + 20; // Adjust x position
+//         const y = Math.floor(i / 2) * 120 + 40; // Adjust y position for more spacing
 
-      doc.text(`Floor ${i + 1}`, x, y);
-      doc.text(`${labels[i].label1}: ${bill.bill1}`, x, y + 10);
-      doc.text(`${labels[i].label2}: ${bill.bill2}`, x, y + 20);
-      doc.text(`${labels[i].label3}: ${bill.bill3}`, x, y + 30);
-      doc.text(`${labels[i].label4}: ${bill.bill4}`, x, y + 40);
-      doc.text(`${labels[i].label5}: ${bill.bill5}`, x, y + 50);
-      doc.text(`Total: ${bill.total}`, x, y + 60);
-      doc.text('Mitu', x + 50, y + 80)
-    });
+//         // Set font size and style for the floor name
+//         doc.setFontSize(14);
+//         doc.setFont('helvetica', 'bold');
+//         doc.text(` ${floorNo[i]}`, x + 20, y);
 
-    doc.save('bill-summary.pdf');
-  };
+//         // Set font size and style for the rest of the text
+//         doc.setFontSize(12);
+//         doc.setFont('helvetica', 'normal');
+//         doc.text(`${labels[i].label1}: ${bill.bill1}`, x, y + 10);
+//         doc.text(`${labels[i].label2}: ${bill.bill2}`, x, y + 20);
+//         doc.text(`${labels[i].label3}: ${bill.bill3}`, x, y + 30);
+//         doc.text(`${labels[i].label4}: ${bill.bill4}`, x, y + 40);
+//         doc.text(`${labels[i].label5}: ${bill.bill5}`, x, y + 50);
+//         doc.line(x, y + 55, x + 60, y + 55);
+//         doc.text(`Total: ${bill.total}`, x, y + 60);
+
+//         // Add a horizontal line at the bottom right for signature
+//         doc.line(x + 55, y + 85, x + 85, y + 85); // (x1, y1, x2, y2)
+
+//         // Optional: Add a label for the signature line
+//         doc.text('Signature', x + 60, y + 90); // (x, y)
+//     });
+
+//     doc.save('bill-summary.pdf');
+// };
+
+const exportPDF = () => {
+  const doc = new jsPDF();
+
+  doc.setFont('helvetica'); // Set font style
+  doc.setFontSize(12); // Set font size
+
+  bills.forEach((bill, i) => {
+      const x = (i % 2) * 100 + 20; // Adjust x position
+      const y = Math.floor(i / 2) * 110 + 40; // Adjust y position for more spacing
+
+      // Set font size and style for the floor name
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text(` ${floorNo[i]}`, x+20, y);
+
+      // Calculate the maximum width of the labels dynamically
+      const labelKeys = Object.keys(labels[i]);
+      let labelWidth = 0;
+      labelKeys.forEach(key => {
+          const currentWidth = doc.getTextWidth(labels[i][key] + ':');
+          if (currentWidth > labelWidth) {
+              labelWidth = currentWidth;
+          }
+      });
+
+      // Set font size and style for the rest of the text
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+
+      // Align the labels and values dynamically
+      labelKeys.forEach((key, index) => {
+          const billKey = `bill${index + 1}`;
+          doc.text(`${labels[i][key]}`, x, y + (index + 1) * 10);
+          doc.text(` :   ${bill[billKey]}`, x + labelWidth + 2, y + (index + 1) * 10);
+      });
+
+      doc.line(x, y + (labelKeys.length + 1) * 10 - 5, x + 60, y + (labelKeys.length + 1) * 10 - 5);
+      // Align the Total value
+      doc.text(`Total`, x, y + (labelKeys.length + 1) * 10+1);
+      doc.text(` :   ${bill.total}`, x + labelWidth + 2, y + (labelKeys.length + 1) * 10);
+
+      // Add a horizontal line at the bottom right for signature
+      doc.line(x, y + (labelKeys.length + 3) * 10, x + 30, y + (labelKeys.length + 3) * 10); // (x1, y1, x2, y2)
+      doc.text('Signature', x + 5, y + (labelKeys.length + 3.5) * 10); // (x, y)
+  });
+
+  doc.save('bill-summary.pdf');
+};
+
+
 
   const startEditing = (index, labelField) => {
     setBackupLabels([...labels]);
