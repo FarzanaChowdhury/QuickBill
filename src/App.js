@@ -1,6 +1,6 @@
 
 import './App.css';
-import BillCalculator from './Form.js'
+import BillCalculator from './BillCalculator.js'
 function App() {
   return (
     <div className="App">

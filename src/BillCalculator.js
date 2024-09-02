@@ -3,7 +3,7 @@ import { jsPDF } from 'jspdf';
 import './CSS/styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faSave, faTimes, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { handleChange, handleFocus, handleLabelChange, toggleEdit, addAttribute, deleteAttribute, startEditingFloor, saveFloorName, cancelEditingFloor } from './Functions.js';
+import { handleChange, handleFocus, handleLabelChange, toggleEdit, addAttribute, handleDeleteClick } from './Functions.js';
 import { FlatName } from './EditFlatName.js';
 
 function BillCalculator() {
@@ -140,7 +140,7 @@ const exportPDF = () => {
 
         {!isEditingLabel[index][labelField] && (
           <button type="button" className='delete'
-            onClick={() => deleteAttribute(index, billField, labelField, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel)}>
+            onClick={() => {handleDeleteClick(index, billField, labelField, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel)}}>
             <FontAwesomeIcon icon={faTrash} />
           </button>
         )}

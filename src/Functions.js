@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-
 
 
 export const handleChange = (index, field, value, bills, setBills) => {
+
+
   const updatedBills = bills.map((bill, i) =>
     i === index ? { ...bill, [field]: parseFloat(value) || 0 } : bill
   );
@@ -31,10 +31,13 @@ export const toggleEdit = (index, field, isEditingLabel, setEditLabel) => {
   setEditLabel(updateEdit)
 }
 
-export const calculateTotal = (index, bills, setBills) => {
+const calculateTotal = (index, bills, setBills) => {
   const updatedBills = bills.map((bill, i) => {
     if (i === index) {
-      const totalAmount = bill.bill1 + bill.bill2 + bill.bill3;
+      const totalAmount = Object.keys(bill)
+      .filter(key => key !== 'total') // Exclude the 'total' field
+      .reduce((sum, key) => sum + bill[key], 0); // Sum up all the bill fields
+
       return { ...bill, total: totalAmount };
     }
     return bill;
@@ -69,15 +72,30 @@ export const addAttribute = (floorIndex, labels, bills, isEditingLabel, setLabel
   setEditLabel(newEditLabels);
 };
 
+//Adding a callback parameter allows you to execute a function after the state has been updated
+
+// export const handleDeleteClick = (index, billField, labelField, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel) => {
+//   deleteAttribute(index, billField, labelField, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel);
+// }
+
+
+export const handleDeleteClick = (index, billField, labelField, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel) => {
+  deleteAttribute(index, billField, labelField, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel, (updatedBills) => {
+    calculateTotal(index, updatedBills, setBills);
+  });
+};
+
+
 //delete bill
 
-export const deleteAttribute = (floorIndex, billKey, labelKey, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel) => {
+const deleteAttribute = (floorIndex, billKey, labelKey, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel, callback) => {
 
   const newBills = bills.map((bill, i) => {
     if (i === floorIndex) {
       const { [billKey]: _, ...rest } = bill;
       return rest;
     }
+    
     return bill;
   });
 
@@ -104,6 +122,8 @@ export const deleteAttribute = (floorIndex, billKey, labelKey, labels, bills, is
   setBills(newBills);
   setLabel(newLabels);
   setEditLabel(newEditLabels);
+
+  if (callback) callback(newBills);
 };
 
 
