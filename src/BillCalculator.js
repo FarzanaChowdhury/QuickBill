@@ -138,12 +138,16 @@ const exportPDF = () => {
           <FontAwesomeIcon icon={isEditingLabel[index][labelField] ? faSave : faPen} onClick={() => startEditing(index, labelField)} />
         </button>
 
+    
+
         {!isEditingLabel[index][labelField] && (
           <button type="button" className='delete'
             onClick={() => {handleDeleteClick(index, billField, labelField, labels, bills, isEditingLabel, setLabel, setBills, setEditLabel)}}>
             <FontAwesomeIcon icon={faTrash} />
           </button>
         )}
+
+
       </div>
 
       {isEditingLabel[index][labelField] ? (
@@ -175,11 +179,11 @@ const exportPDF = () => {
 
   return (
     <div>
-      <h2>Bill Calculator</h2>
+      <h2 style={{fontSize: '1.5rem', color: '#220076'}}>Bill Calculator</h2>
 
       <div className='pdf'>
 
-        <button onClick={exportPDF}>Export as PDF</button>
+        <button className='export' onClick={exportPDF}>Export as PDF</button>
       </div>
 
       <div className='grid-container'>
@@ -189,7 +193,7 @@ const exportPDF = () => {
           <div key={index}>
             {/* <h3>{floorNo[index]}</h3> */}
             <FlatName floorNo={floorNo} setFloor={setFloor} index={index} />
-            <form>
+            <form className='form-container'>
               <div className='labelsNames'>
 
 
@@ -206,7 +210,7 @@ const exportPDF = () => {
               </button>
 
             </form>
-            <p>Total: {bill.total}</p>
+            <p className='total'>Total: {bill.total}</p>
           </div>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import { faPen } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, {useState} from "react";
 
@@ -33,13 +33,13 @@ export function FlatName({ floorNo, setFloor, index }) {
                         value={currentFloorName}
                         onChange={(e) => setCurrentFloorName(e.target.value)}
                     />
-                    <button onClick={saveFloorName}>Save</button>
-                    <button onClick={cancelEditingFloor}>Cancel</button>
+                    <button className='save' onClick={saveFloorName}><FontAwesomeIcon icon={faSave}/></button>
+                    <button className='cancel' onClick={cancelEditingFloor}><FontAwesomeIcon icon={faTrash}/></button>
                 </>
             ) : (
                 <>
                 <div className="button-align">
-                <button onClick={startEditingFloor}><FontAwesomeIcon icon = {faPen}></FontAwesomeIcon></button>
+                <button className='edit' onClick={startEditingFloor}><FontAwesomeIcon icon = {faPen}></FontAwesomeIcon></button>
                     <h3>{floorNo[index]}</h3>
                     </div>
                 </>
