@@ -134,8 +134,8 @@ const exportPDF = () => {
     <div className='fields'>
 
       <div className='edit-button'>
-        <button className='edit' type="button">
-          <FontAwesomeIcon icon={isEditingLabel[index][labelField] ? faSave : faPen} onClick={() => startEditing(index, labelField)} />
+        <button className='edit' type="button" onClick={() => startEditing(index, labelField)}>
+          <FontAwesomeIcon icon={isEditingLabel[index][labelField] ? faSave : faPen} />
         </button>
 
     
@@ -179,7 +179,7 @@ const exportPDF = () => {
 
   return (
     <div>
-      <h2 style={{fontSize: '1.5rem', color: '#220076'}}>Bill Calculator</h2>
+      <h2 style={{fontSize: '1.6rem', color: '#220076'}}>Quick Bill</h2>
 
       <div className='pdf'>
 
@@ -190,10 +190,12 @@ const exportPDF = () => {
 
 
         {bills.map((bill, index) => (
-          <div key={index}>
+          <div key={index} className='form-container'>
             {/* <h3>{floorNo[index]}</h3> */}
+            <div style={{fontSize: '1.2rem'}}>
             <FlatName floorNo={floorNo} setFloor={setFloor} index={index} />
-            <form className='form-container'>
+            </div>
+            <form >
               <div className='labelsNames'>
 
 
