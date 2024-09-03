@@ -204,3 +204,12 @@ background-color: rgb(75, 79, 205);
 .export:active{
     box-shadow: 0 0 0;
 }
+
+.title{
+    font-size: 1.6rem;
+    color: #220076;
+}
+
+.update-buttons{
+    display: flex;
+}

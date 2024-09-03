@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import './CSS/styles.css';
+import './CSS/responsive_styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faSave, faTimes, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { handleChange, handleFocus, handleLabelChange, toggleEdit, addAttribute, handleDeleteClick } from './Functions.js';
@@ -76,8 +77,8 @@ const exportPDF = () => {
   doc.setFontSize(12); // Set font size
 
   bills.forEach((bill, i) => {
-      const x = (i % 2) * 100 + 20; // Adjust x position
-      const y = Math.floor(i / 2) * 110 + 40; // Adjust y position for more spacing
+      const x = (i % 2) * 102 + 25; // Adjust x position
+      const y = Math.floor(i / 2) * 130 + 40; // Adjust y position for more spacing
 
       // Set font size and style for the floor name
       doc.setFontSize(14);
@@ -133,7 +134,7 @@ const exportPDF = () => {
   const renderInput = (index, billField, labelField) => (
     <div className='fields'>
 
-      <div className='edit-button'>
+      <div className='update-buttons'>
         <button className='edit' type="button" onClick={() => startEditing(index, labelField)}>
           <FontAwesomeIcon icon={isEditingLabel[index][labelField] ? faSave : faPen} />
         </button>
@@ -179,7 +180,7 @@ const exportPDF = () => {
 
   return (
     <div>
-      <h2 style={{fontSize: '1.6rem', color: '#220076'}}>Quick Bill</h2>
+      <h2 className='title'>Quick Bill</h2>
 
       <div className='pdf'>
 
